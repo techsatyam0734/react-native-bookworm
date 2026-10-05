@@ -9,6 +9,12 @@ import authRoutes from "./routes/authRoutes.js";
 import bookRoutes from "./routes/bookRoutes.js";
 
 import { connectDB } from "./lib/db.js";
+import cloudinary from "./lib/cloudinary.js";
+
+cloudinary.api
+  .ping()
+  .then((r) => console.log("PING OK", r))
+  .catch((e) => console.log("PING FAIL", e.http_code, e.message));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
