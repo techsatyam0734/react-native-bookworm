@@ -18,6 +18,11 @@ router.post("/", protectRoute, async (req, res) => {
       .upload(image)
       .then((r) => console.log("UPLOAD OK", r.secure_url))
       .catch((e) => console.log("UPLOAD FAIL", e.http_code, e.message));
+    if (!uploadResponse?.secure_url) {
+      return res.status(502).json({ message: "Image upload failed" });
+    }
+
+    console.log(uploadResponse);
     const imageUrl = uploadResponse.secure_url;
 
     // save to the db
