@@ -33,14 +33,18 @@ router.post("/", protectRoute, async (req, res) => {
     // console.log("Error creating book", error);
     // res.status(500).json({ message: error.message });
 
-    console.log("Error creating book:", error);
-    console.log("Cloudinary error:", error?.error);
-    console.log("Cloudinary status:", error?.http_code);
+    console.log("===== CLOUDINARY UPLOAD ERROR =====");
+    console.log("message:", error.message);
+    console.log("http_code:", error.http_code);
+    console.log("name:", error.name);
+    console.log("error object:", error.error);
+    console.log("response:", error.response);
+    console.log("headers:", error.response?.headers);
+    console.log("===================================");
 
     res.status(500).json({
       message: error.message,
-      cloudinaryError: error?.error?.message || null,
-      cloudinaryStatus: error?.http_code || null,
+      status: error.http_code,
     });
   }
 });
