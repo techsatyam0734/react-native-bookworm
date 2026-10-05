@@ -30,8 +30,18 @@ router.post("/", protectRoute, async (req, res) => {
 
     res.status(201).json(newBook);
   } catch (error) {
-    console.log("Error creating book", error);
-    res.status(500).json({ message: error.message });
+    // console.log("Error creating book", error);
+    // res.status(500).json({ message: error.message });
+
+    console.log("Error creating book:", error);
+    console.log("Cloudinary error:", error?.error);
+    console.log("Cloudinary status:", error?.http_code);
+
+    res.status(500).json({
+      message: error.message,
+      cloudinaryError: error?.error?.message || null,
+      cloudinaryStatus: error?.http_code || null,
+    });
   }
 });
 
@@ -95,7 +105,5 @@ router.delete("./id", protectRoute, async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
-
 
 export default router;
