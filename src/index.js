@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 // });
 
 job.start();
-app.use(express.json());
+app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
