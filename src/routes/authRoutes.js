@@ -1,6 +1,9 @@
 import express from "express";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import Book from "../models/Book.js";
+import cloudinary from "../lib/cloudinary.js";
+import protectRoute from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -57,6 +60,7 @@ router.post("/register", async (req, res) => {
         username: user.username,
         email: user.email,
         profileImage: user.profileImage,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {
@@ -93,6 +97,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         username: user.username,
         profileImage: user.profileImage,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {
@@ -100,6 +105,32 @@ router.post("/login", async (req, res) => {
     res.status(500).json({
       message: "Internal Server Error",
     });
+  }
+});
+
+router.delete("/me", protectRoute, async (req, res) => {
+  try {
+    const books = await Book.find({ user: req.user._id });
+
+    // delete the book images from cloudinary
+    for (const book of books) {
+      if (book.image?.includes("cloudinary")) {
+        try {
+          const publicId = book.image.split("/").pop().split(".")[0];
+          await cloudinary.uploader.destroy(publicId);
+        } catch (err) {
+          console.log("Error deleting image from cloudinary", err);
+        }
+      }
+    }
+
+    await Book.deleteMany({ user: req.user._id });
+    await User.findByIdAndDelete(req.user._id);
+
+    res.json({ message: "Account deleted" });
+  } catch (error) {
+    console.log("Error deleting account", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

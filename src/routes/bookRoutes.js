@@ -135,6 +135,8 @@ router.post("/", protectRoute, async (req, res) => {
       return res.status(400).json({ message: "Please provide all fields" });
     }
 
+    console.log(image);
+
     // upload the image to cloudinary
     const uploadResponse = await cloudinary.uploader.upload(image);
     console.log(uploadResponse);
@@ -161,7 +163,7 @@ router.post("/", protectRoute, async (req, res) => {
 // pagination => infinite loading
 router.get("/", protectRoute, async (req, res) => {
   // example call from react native - frontend
-  // const response = await fetch("http://localhost:3000/api/books?page=1&limit=5");
+  // const response = await fetch("http://localhost:3000/api/books?page=1&limit=2");
   try {
     const page = req.query.page || 1;
     const limit = req.query.limit || 2;
